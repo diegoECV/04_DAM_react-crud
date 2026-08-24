@@ -9,21 +9,38 @@ import ProductForm from '../components/ProductForm';
 export default function ProductPage() {
     const [products, setProducts] = useState<Product[]>(initialProducts);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
     function closeDrawer() {
         setIsDrawerOpen(false);
+        setEditingProduct(null);
     }
 
     function openDrawer() {
+        setEditingProduct(null);
         setIsDrawerOpen(true);
     }
 
-    function handleSave(data: Omit<Product, "id">) {
-        setProducts((currentProducts) => [
-            ...currentProducts,
-            { id: Date.now(), ...data },
-        ]);
+    function handleEdit(product: Product) {
+        setEditingProduct(product);
+        setIsDrawerOpen(true);
+    }
 
+    function handleDelete(id: number) {
+        setProducts(currentProducts => currentProducts.filter(p => p.id !== id));
+    }
+
+    function handleSave(data: Omit<Product, "id">) {
+        if (editingProduct) {
+            setProducts(currentProducts => 
+                currentProducts.map(p => p.id === editingProduct.id ? { ...data, id: editingProduct.id } : p)
+            );
+        } else {
+            setProducts(currentProducts => [
+                ...currentProducts,
+                { id: Date.now(), ...data },
+            ]);
+        }
         closeDrawer();
     }
 
@@ -33,11 +50,16 @@ export default function ProductPage() {
 
             <main className='mx-auto max-w-7xl px-6 py-8'>
                 {/* Product List */}
-                <ProductList products={products} />
+                <ProductList 
+                    products={products} 
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
             </main>
 
-            <Drawer isOpen={isDrawerOpen} title='Nuevo' onClose={closeDrawer}>
+            <Drawer isOpen={isDrawerOpen} title={editingProduct ? 'Editar' : 'Nuevo'} onClose={closeDrawer}>
                 <ProductForm
+                    initialProduct={editingProduct}
                     onSave={handleSave}
                     onCancel={closeDrawer}
                 />

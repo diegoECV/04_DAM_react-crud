@@ -1,16 +1,31 @@
-import { useState, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import type { Category, Product } from '../types';
 
 interface Props {
+    initialProduct?: Product | null;
     onSave: (product: Omit<Product, "id">) => void;
     onCancel: () => void;
 }
 
-export default function ProductForm({ onSave, onCancel }: Props) {
+export default function ProductForm({ initialProduct, onSave, onCancel }: Props) {
     const [name, setName] = useState("");
     const [category, setCategory] = useState<Category>("Tecnología");
     const [price, setPrice] = useState("");
     const [stock, setStock] = useState("");
+
+    useEffect(() => {
+        if (initialProduct) {
+            setName(initialProduct.name);
+            setCategory(initialProduct.category);
+            setPrice(initialProduct.price.toString());
+            setStock(initialProduct.stock.toString());
+        } else {
+            setName("");
+            setCategory("Tecnología");
+            setPrice("");
+            setStock("");
+        }
+    }, [initialProduct]);
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -31,10 +46,10 @@ export default function ProductForm({ onSave, onCancel }: Props) {
         <form onSubmit={handleSubmit}>
             <div className="mb-6">
                 <p className="text-sm font-medium text-blue-600">
-                    Nuevo producto
+                    {initialProduct ? 'Editar producto' : 'Nuevo producto'}
                 </p>
                 <h2 className="mt-1 text-xl font-bold text-slate-900">
-                    Registrar producto
+                    {initialProduct ? 'Actualizar producto' : 'Registrar producto'}
                 </h2>
             </div>
 
@@ -112,7 +127,7 @@ export default function ProductForm({ onSave, onCancel }: Props) {
                     type="submit"
                     className="flex-1 cursor-pointer rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
                 >
-                    Guardar
+                    {initialProduct ? 'Actualizar' : 'Guardar'}
                 </button>
             </div>
         </form>

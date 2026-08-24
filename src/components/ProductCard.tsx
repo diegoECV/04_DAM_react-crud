@@ -2,9 +2,11 @@ import type { Product } from '../types';
 
 interface Props {
     product: Product;
+    onEdit: (product: Product) => void;
+    onDelete: (id: number) => void;
 }
 
-export default function ProductCard({product}: Props) {
+export default function ProductCard({product, onEdit, onDelete}: Props) {
     return (
         <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md">
             <div className="mb-4 flex items-start justify-between gap-4">
@@ -41,6 +43,7 @@ export default function ProductCard({product}: Props) {
             <div className="flex gap-2">
                 <button
                     type="button"
+                    onClick={() => onEdit(product)}
                     className="flex-1 cursor-pointer rounded-xl border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                 >
                     Editar
@@ -48,6 +51,7 @@ export default function ProductCard({product}: Props) {
 
                 <button
                     type="button"
+                    onClick={() => onDelete(product.id)}
                     className="flex-1 cursor-pointer rounded-xl bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800"
                 >
                     Eliminar

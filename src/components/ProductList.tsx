@@ -3,9 +3,11 @@ import ProductCard from './ProductCard';
 
 interface Props {
     products: Product[];
+    onEdit: (product: Product) => void;
+    onDelete: (id: number) => void;
 }
 
-export default function ProductList({ products }: Props) {
+export default function ProductList({ products, onEdit, onDelete }: Props) {
     if (products.length === 0) {
         return (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
@@ -25,6 +27,8 @@ export default function ProductList({ products }: Props) {
                 <ProductCard
                     key={product.id}
                     product={product}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
                 />
             ))}
         </div>
